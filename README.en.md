@@ -2,7 +2,6 @@
 
 ![Concept render 1](assets/micro-star-effect-1.png)
 
-![Concept render 2](assets/micro-star-effect-2.png)
 
 An offline, open-source desktop star map for an ESP32-C3 and a 1.54-inch ST7789 display. It calculates the apparent positions of the Sun, Moon, Mars, Jupiter, and Saturn locally and renders them against a right-to-left azimuth horizon. Saturn is drawn with rings; objects below the horizon are hidden; rising and setting use a short smooth transition.
 
