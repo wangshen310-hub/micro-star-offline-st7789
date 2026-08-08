@@ -72,3 +72,9 @@ python -m unittest discover -s tests -v
 ## Attribution and licence
 
 Derived from [AnthonySturdy/micro-radar](https://github.com/AnthonySturdy/micro-radar). Keep the upstream attribution and [MIT License](LICENSE). Astronomical calculations use the bundled [Astronomy Engine](https://github.com/cosinekitty/astronomy) library.
+
+
+### First-time setup
+
+Before the first run, enter the device location's latitude and longitude. These coordinates are required for local horizon and azimuth calculations; without them, the displayed celestial positions cannot be correct. Use decimal degrees, for example 31.2304, 121.4737.
+On an unconfigured device, the screen shows LOCATION REQUIRED. Connect USB serial and send SETLOC <latitude> <longitude>, for example SETLOC 31.2304 121.4737. The device replies LOCATION_OK and stores the coordinates in flash. You can also run 	ools/StarLocationSetup.cmd.

@@ -27,6 +27,7 @@ public:
 
     void Begin(double latitude, double longitude);
     void Update(bool timeValid, int timezoneOffsetMinutes);
+    void ShowLocationRequired();
 
 private:
     LGFX& tft;
@@ -35,6 +36,7 @@ private:
     SkyObject objects[5]{};
     unsigned long lastCalculation = 0;
     bool hasCalculation = false;
+    bool initialized = false;
     int labelBoxCount = 0;
     int labelBoxX[16]{};
     int labelBoxY[16]{};

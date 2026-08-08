@@ -5,6 +5,11 @@
 
 constexpr time_t MIN_VALID_EPOCH = 1704067200;  // 2024-01-01 UTC
 
+void SerialTimeSync::SetLocationConfig(LocationConfig& config)
+{
+    locationConfig = &config;
+}
+
 void SerialTimeSync::Begin()
 {
     input.reserve(96);
@@ -51,6 +56,9 @@ void SerialTimeSync::HandleLine(const String& rawLine)
         Serial.println(IsTimeValid() ? "TIME_VALID" : "TIME_REQUIRED");
         return;
     }
+
+    if (locationConfig != nullptr && locationConfig->HandleCommand(line))
+        return;
 
     long long epoch = 0;
     int offset = 480;

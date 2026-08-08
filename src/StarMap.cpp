@@ -64,6 +64,8 @@ StarMap::StarMap(LGFX& display, LGFX_Sprite& canvas)
 void StarMap::Begin(double latitude, double longitude)
 {
     observer = Astronomy_MakeObserver(latitude, longitude, 0.0);
+    initialized = true;
+    hasCalculation = false;
     objects[0] = { "SUN", BODY_SUN, Rgb(255, 190, 0), 0, 0, 0, 1, false };
     objects[1] = { "MOON", BODY_MOON, Rgb(210, 220, 255), 0, 0, 0, 0, false };
     objects[2] = { "MARS", BODY_MARS, Rgb(255, 70, 30), 0, 0, 0, 0, false };
@@ -73,6 +75,11 @@ void StarMap::Begin(double latitude, double longitude)
 
 void StarMap::Update(bool timeValid, int timezoneOffsetMinutes)
 {
+    if (!initialized) {
+        ShowLocationRequired();
+        return;
+    }
+
     if (!timeValid) {
         DrawWaitingScreen();
         return;
@@ -86,6 +93,23 @@ void StarMap::Update(bool timeValid, int timezoneOffsetMinutes)
     }
 
     DrawChart(timezoneOffsetMinutes);
+}
+
+void StarMap::ShowLocationRequired()
+{
+    backbuffer.fillScreen(Rgb(0, 0, 8));
+    backbuffer.setTextColor(Rgb(110, 180, 255));
+    backbuffer.setTextSize(2);
+    backbuffer.drawCentreString("LOCATION REQUIRED", 120, 28, 1);
+    backbuffer.setTextSize(1);
+    backbuffer.setTextColor(Rgb(220, 220, 220));
+    backbuffer.drawCentreString("Connect USB serial", 120, 78, 1);
+    backbuffer.drawCentreString("SETLOC <LAT> <LON>", 120, 100, 1);
+    backbuffer.drawCentreString("Example:", 120, 126, 1);
+    backbuffer.drawCentreString("SETLOC 31.2304 121.4737", 120, 145, 1);
+    backbuffer.setTextColor(Rgb(100, 120, 150));
+    backbuffer.drawCentreString("Coordinates are saved", 120, 175, 1);
+    backbuffer.pushSprite(0, 0);
 }
 
 void StarMap::Calculate()

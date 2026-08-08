@@ -72,3 +72,9 @@ python -m unittest discover -s tests -v
 ## 来源、致谢与许可证
 
 本项目基于并移植扩展自 [AnthonySturdy/micro-radar](https://github.com/AnthonySturdy/micro-radar)。再次分发时请保留上游致谢和 [MIT License](LICENSE)。天文计算使用随项目提供的 [Astronomy Engine](https://github.com/cosinekitty/astronomy) 库。
+
+
+### 首次配置
+
+第一次运行前，必须填写设备所在位置的纬度和经度。这些坐标用于本地计算地平线和天体方位；没有坐标，屏幕上的天体位置将无法正确显示。请使用十进制度数，例如：31.2304, 121.4737。
+未配置的设备会显示 LOCATION REQUIRED。连接 USB 串口后发送 SETLOC <纬度> <经度>，例如 SETLOC 31.2304 121.4737。设备返回 LOCATION_OK 后会把坐标保存到 Flash，也可以运行 	ools/StarLocationSetup.cmd。

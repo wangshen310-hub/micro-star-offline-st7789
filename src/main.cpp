@@ -1,20 +1,19 @@
-﻿#include <Arduino.h>
-#include <Preferences.h>
+#include <Arduino.h>
 #include <WiFi.h>
 
 #include "LGFX.h"
+#include "LocationConfig.h"
 #include "SerialTimeSync.h"
 #include "StarMap.h"
 
 constexpr int SCREEN_SIZE = 240;
-constexpr double DEFAULT_LATITUDE = 31.771894;
-constexpr double DEFAULT_LONGITUDE = 117.198016;
 
 LGFX tft;
 LGFX_Sprite backbuffer(&tft);
-Preferences preferences;
+LocationConfig locationConfig;
 SerialTimeSync timeSync;
 StarMap starMap(tft, backbuffer);
+bool locationStarted = false;
 
 void setup()
 {
@@ -28,23 +27,35 @@ void setup()
     // Offline mode: keep the radio disabled and never connect to saved networks.
     WiFi.mode(WIFI_OFF);
 
-    preferences.begin("config", true);
-    const double latitude = preferences.getString("latitude", String(DEFAULT_LATITUDE, 6)).toDouble();
-    const double longitude = preferences.getString("longitude", String(DEFAULT_LONGITUDE, 6)).toDouble();
-    preferences.end();
+    locationStarted = locationConfig.Begin();
+    if (locationStarted) {
+        Serial.print("LOCATION ");
+        Serial.print(locationConfig.Latitude(), 6);
+        Serial.print(" ");
+        Serial.println(locationConfig.Longitude(), 6);
+        starMap.Begin(locationConfig.Latitude(), locationConfig.Longitude());
+    } else {
+        Serial.println("LOCATION_REQUIRED");
+        starMap.ShowLocationRequired();
+    }
 
-    Serial.print("LOCATION ");
-    Serial.print(latitude, 6);
-    Serial.print(" ");
-    Serial.println(longitude, 6);
-
-    starMap.Begin(latitude, longitude);
+    timeSync.SetLocationConfig(locationConfig);
     timeSync.Begin();
 }
 
 void loop()
 {
     timeSync.Update();
-    starMap.Update(timeSync.IsTimeValid(), timeSync.TimezoneOffsetMinutes());
+    if (!locationStarted && locationConfig.IsConfigured()) {
+        locationStarted = true;
+        Serial.print("LOCATION ");
+        Serial.print(locationConfig.Latitude(), 6);
+        Serial.print(" ");
+        Serial.println(locationConfig.Longitude(), 6);
+        starMap.Begin(locationConfig.Latitude(), locationConfig.Longitude());
+    }
+
+    if (locationStarted)
+        starMap.Update(timeSync.IsTimeValid(), timeSync.TimezoneOffsetMinutes());
     delay(20);
 }
