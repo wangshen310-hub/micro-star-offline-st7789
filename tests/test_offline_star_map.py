@@ -23,7 +23,10 @@ class OfflineStarMapTests(unittest.TestCase):
 
     def test_star_map_calculates_required_bodies(self):
         source = self.read("src/StarMap.cpp")
-        for body in ("BODY_SUN", "BODY_MOON", "BODY_MARS", "BODY_JUPITER", "BODY_SATURN"):
+        for body in (
+            "BODY_SUN", "BODY_MOON", "BODY_MERCURY", "BODY_VENUS", "BODY_MARS",
+            "BODY_JUPITER", "BODY_SATURN", "BODY_URANUS", "BODY_NEPTUNE",
+        ):
             self.assertIn(body, source)
         self.assertIn("Astronomy_Equator", source)
         self.assertIn("Astronomy_Horizon", source)
@@ -66,12 +69,12 @@ class OfflineStarMapTests(unittest.TestCase):
         self.assertIn("labelY = 2;", source)
         self.assertIn("backbuffer.drawString(labelText, labelX, labelY);", source)
         self.assertIn("if (object.body == BODY_SUN)", source)
-        self.assertIn("else if (object.body == BODY_MARS || object.body == BODY_JUPITER", source)
+        self.assertIn("else if (HasMagnitude(object.body))", source)
         self.assertIn("const int yOrder[] = { aboveY, aboveY, aboveY, belowY", source)
         self.assertIn("const int extraBelowY = y + radius + labelHeight + 4;", source)
         self.assertNotIn("backbuffer.drawString(details", source)
         self.assertIn("constexpr int CHART_MARGIN = 8;", source)
-        self.assertIn("labelBoxX[16]", header)
+        self.assertIn("labelBoxX[24]", header)
         self.assertIn("labelBoxX[labelBoxCount] = objectX - markerExtent - 2;", source)
         self.assertIn("void StarMap::DrawMarker", source)
         self.assertIn("DrawMarker(object);", source)
@@ -93,7 +96,7 @@ class OfflineStarMapTests(unittest.TestCase):
         self.assertIn("NIGHT_STARS", source)
         self.assertIn("backbuffer.setTextSize(2)", source)
         self.assertIn("labelBoxWidth[1] = 106", source)
-        self.assertIn("SkyObject objects[5]", header)
+        self.assertIn("SkyObject objects[9]", header)
         self.assertNotIn("DrawSkyBackground", source)
         self.assertNotIn("DrawDayDecor", source)
         self.assertNotIn("DAY_PARTICLES", source)

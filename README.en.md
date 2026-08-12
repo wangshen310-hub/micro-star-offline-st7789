@@ -3,13 +3,13 @@
 ![Concept render 1](assets/micro-star-effect-1.png)
 
 
-An offline, open-source desktop star map for an ESP32-C3 and a 1.54-inch ST7789 display. It calculates the apparent positions of the Sun, Moon, Mars, Jupiter, and Saturn locally and renders them against a right-to-left azimuth horizon. Saturn is drawn with rings; objects below the horizon are hidden; rising and setting use a short smooth transition.
+An offline, open-source desktop star map for an ESP32-C3 and a 1.54-inch ST7789 display. It calculates the apparent positions of the Sun, Moon, and all seven observable planets other than Earth—Mercury, Venus, Mars, Jupiter, Saturn, Uranus, and Neptune—and renders them against a right-to-left azimuth horizon. Saturn is drawn with rings; objects below the horizon are hidden; rising and setting use a short smooth transition.
 
 ## Project and features
 
 This is a hardware-specific port of [AnthonySturdy/micro-radar](https://github.com/AnthonySturdy/micro-radar), an ESP32-C3 desktop flight-radar project. The port retains the upstream project structure, display-adapter workflow, and MIT licence, then adds an offline astronomical display for the tested 12-pin panel.
 
-- Sun, Moon, Mars, Jupiter, and Saturn with azimuth, altitude, and detail fields.
+- Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, and Neptune with azimuth, altitude, and detail fields.
 - Saturn marker includes a ring; Mars retains its `M+1.3`-style magnitude field.
 - Right-to-left scale: `0/N → 90/E → 180/S → 270/W → 360/N`.
 - Horizon at about three-quarters of the 240×240 display.

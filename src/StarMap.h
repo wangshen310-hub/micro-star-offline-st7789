@@ -33,15 +33,15 @@ private:
     LGFX& tft;
     LGFX_Sprite& backbuffer;
     astro_observer_t observer{};
-    SkyObject objects[5]{};
+    SkyObject objects[9]{};
     unsigned long lastCalculation = 0;
     bool hasCalculation = false;
     bool initialized = false;
     int labelBoxCount = 0;
-    int labelBoxX[16]{};
-    int labelBoxY[16]{};
-    int labelBoxWidth[16]{};
-    int labelBoxHeight[16]{};
+    int labelBoxX[24]{};
+    int labelBoxY[24]{};
+    int labelBoxWidth[24]{};
+    int labelBoxHeight[24]{};
 
     void Calculate();
     void DrawWaitingScreen();

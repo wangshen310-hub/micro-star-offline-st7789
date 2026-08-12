@@ -39,9 +39,18 @@ int BaseRadius(astro_body_t body)
 {
     if (body == BODY_SUN)
         return 7;
-    if (body == BODY_MOON || body == BODY_JUPITER || body == BODY_SATURN)
+    if (body == BODY_MOON || body == BODY_VENUS || body == BODY_JUPITER || body == BODY_SATURN)
         return 6;
+    if (body == BODY_MERCURY)
+        return 4;
     return 5;
+}
+
+bool HasMagnitude(astro_body_t body)
+{
+    return body == BODY_MERCURY || body == BODY_VENUS || body == BODY_MARS
+        || body == BODY_JUPITER || body == BODY_SATURN
+        || body == BODY_URANUS || body == BODY_NEPTUNE;
 }
 
 double VisibilityFactor(double altitude)
@@ -68,9 +77,13 @@ void StarMap::Begin(double latitude, double longitude)
     hasCalculation = false;
     objects[0] = { "SUN", BODY_SUN, Rgb(255, 190, 0), 0, 0, 0, 1, false };
     objects[1] = { "MOON", BODY_MOON, Rgb(210, 220, 255), 0, 0, 0, 0, false };
-    objects[2] = { "MARS", BODY_MARS, Rgb(255, 70, 30), 0, 0, 0, 0, false };
-    objects[3] = { "JUPITER", BODY_JUPITER, Rgb(235, 178, 105), 0, 0, 0, 0, false };
-    objects[4] = { "SATURN", BODY_SATURN, Rgb(230, 205, 125), 0, 0, 0, 0, false };
+    objects[2] = { "MERCURY", BODY_MERCURY, Rgb(175, 165, 150), 0, 0, 0, 0, false };
+    objects[3] = { "VENUS", BODY_VENUS, Rgb(255, 225, 155), 0, 0, 0, 0, false };
+    objects[4] = { "MARS", BODY_MARS, Rgb(255, 70, 30), 0, 0, 0, 0, false };
+    objects[5] = { "JUPITER", BODY_JUPITER, Rgb(235, 178, 105), 0, 0, 0, 0, false };
+    objects[6] = { "SATURN", BODY_SATURN, Rgb(230, 205, 125), 0, 0, 0, 0, false };
+    objects[7] = { "URANUS", BODY_URANUS, Rgb(115, 220, 225), 0, 0, 0, 0, false };
+    objects[8] = { "NEPTUNE", BODY_NEPTUNE, Rgb(75, 115, 255), 0, 0, 0, 0, false };
 }
 
 void StarMap::Update(bool timeValid, int timezoneOffsetMinutes)
@@ -143,7 +156,7 @@ void StarMap::Calculate()
             const astro_angle_result_t phase = Astronomy_MoonPhase(time);
             if (phase.status == ASTRO_SUCCESS)
                 object.illuminatedFraction = (1.0 - cos(phase.angle * PI_VALUE / 180.0)) / 2.0;
-        } else if (object.body == BODY_MARS || object.body == BODY_JUPITER || object.body == BODY_SATURN) {
+        } else if (HasMagnitude(object.body)) {
             const astro_illum_t illumination = Astronomy_Illumination(object.body, time);
             if (illumination.status == ASTRO_SUCCESS) {
                 object.illuminatedFraction = illumination.phase_fraction;
@@ -193,7 +206,7 @@ void StarMap::DrawChart(int timezoneOffsetMinutes)
     labelBoxHeight[1] = 24;
 
     for (const SkyObject& object : objects) {
-        if (!object.valid || object.altitude <= 0.0 || labelBoxCount >= 16)
+        if (!object.valid || object.altitude <= 0.0 || labelBoxCount >= 24)
             continue;
         const auto [objectX, objectY] = Project(object.azimuth, object.altitude);
         const double visibility = VisibilityFactor(object.altitude);
@@ -337,7 +350,7 @@ void StarMap::DrawObject(const SkyObject& object)
             object.altitude,
             object.illuminatedFraction * 100.0
         );
-    } else if (object.body == BODY_MARS || object.body == BODY_JUPITER || object.body == BODY_SATURN) {
+    } else if (HasMagnitude(object.body)) {
         snprintf(
             details,
             sizeof(details),
@@ -382,7 +395,7 @@ void StarMap::DrawObject(const SkyObject& object)
         const int yOrder[] = { aboveY, aboveY, aboveY, belowY, belowY, belowY, centeredY, centeredY };
         std::copy(std::begin(xOrder), std::end(xOrder), candidateX);
         std::copy(std::begin(yOrder), std::end(yOrder), candidateY);
-    } else if (object.body == BODY_MARS || object.body == BODY_JUPITER) {
+    } else if (HasMagnitude(object.body)) {
         const int xOrder[] = { centeredX, rightX, leftX, centeredX, rightX, leftX, rightX, leftX };
         const int yOrder[] = { extraBelowY, extraBelowY, extraBelowY, aboveY, aboveY, aboveY, centeredY, centeredY };
         std::copy(std::begin(xOrder), std::end(xOrder), candidateX);
@@ -446,7 +459,7 @@ void StarMap::DrawObject(const SkyObject& object)
         }
     }
 
-    if (!placed || labelBoxCount >= 16)
+    if (!placed || labelBoxCount >= 24)
         return;
 
     labelBoxX[labelBoxCount] = labelX;
